@@ -1,0 +1,22 @@
+{
+    "legacy_addon_id": "",
+    "title": "[Thaidt] Recent Replies Statistics",
+    "description": "Hiển thị bảng thống kê các bài viết được trả lời gần đây nhất với tùy chọn loại trừ forum và thread ID.",
+    "version_id": 1000070,
+    "version_string": "1.0.0",
+    "dev": "Thaidt",
+    "dev_url": "",
+    "faq_url": "",
+    "support_url": "",
+    "extra_urls": [],
+    "require": {
+        "XF": [
+            2030010,
+            "XenForo 2.3.0+"
+        ],
+        "php": [
+            "7.4.0",
+            "PHP 7.4.0+"
+        ]
+    }
+}

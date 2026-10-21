@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<admin_navigation>
+  <navigation navigation_id="thaidt_statistics_tabs" parent_navigation_id="setup" display_order="950" link="thaidt-statistics/" admin_permission_id="option" debug_only="0" hide_no_children="0">
+    <phrase title="admin_navigation.thaidt_statistics_tabs" version_id="1000070" version_string="1.0.0"><![CDATA[[Thaidt] Quản lý Tabs Thống kê]]></phrase>
+  </navigation>
+</admin_navigation>

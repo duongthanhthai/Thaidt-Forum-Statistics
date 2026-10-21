@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+  <template type="admin" title="option_thaidt_statistics_tab_manager" version_id="1000070" version_string="1.0.0"><![CDATA[<xf:formrow rowtype="input"
+	label="{$option.title}"
+	explain="{$explainHtml}"
+	html="{$listedHtml}">
+
+	<xf:css>
+	.thaidt-tab-manager-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-bottom: 12px;
+		border: 1px solid #cbd5e1;
+		border-radius: 6px;
+		overflow: hidden;
+	}
+	.thaidt-tab-manager-table th {
+		background: #f1f5f9;
+		padding: 10px;
+		border-bottom: 2px solid #cbd5e1;
+		font-size: 13px;
+		font-weight: 600;
+		color: #334155;
+		text-align: left;
+	}
+	.thaidt-tab-manager-table td {
+		padding: 8px 10px;
+		border-bottom: 1px solid #e2e8f0;
+		vertical-align: middle;
+		background: #ffffff;
+	}
+	.thaidt-tab-manager-row:hover td {
+		background: #f8fafc;
+	}
+	</xf:css>
+
+	<table class="thaidt-tab-manager-table js-thaidt-tab-table">
+		<thead>
+			<tr>
+				<th style="width: 70px;">Thứ tự</th>
+				<th>Tên Tab (Hiển thị Frontend)</th>
+				<th style="width: 210px;">Nguồn dữ liệu / Loại Tab</th>
+				<th>Diễn đàn nguồn (Nếu chọn Lọc Diễn Đàn)</th>
+				<th style="width: 50px; text-align: center;">Bật</th>
+				<th style="width: 50px; text-align: center;">Xóa</th>
+			</tr>
+		</thead>
+		<tbody class="js-thaidt-tab-tbody">
+			<xf:foreach loop="$tabs" key="$i" value="$tab">
+				<tr class="thaidt-tab-manager-row js-thaidt-tab-row">
+					<td>
+						<input type="number" name="{$inputName}[{$i}][display_order]" value="{$tab.display_order}" class="input input--number" style="width: 60px;" min="0" step="5" />
+					</td>
+					<td>
+						<input type="text" name="{$inputName}[{$i}][title]" value="{$tab.title}" class="input js-tab-title-input" placeholder="Tên Tab ngoài frontend..." />
+						<input type="hidden" name="{$inputName}[{$i}][id]" value="{$tab.id}" />
+					</td>
+					<td>
+						<select name="{$inputName}[{$i}][type]" class="input js-thaidt-type-select">
+							<option value="recent_replies" {{ $tab.type == 'recent_replies' ? 'selected' : '' }}>Vừa trả lời (Bài có reply mới nhất)</option>
+							<option value="latest_threads" {{ $tab.type == 'latest_threads' ? 'selected' : '' }}>Bài mới tạo (Chủ đề mới gửi)</option>
+							<option value="most_viewed" {{ $tab.type == 'most_viewed' ? 'selected' : '' }}>Xem nhiều nhất</option>
+							<option value="sticky" {{ $tab.type == 'sticky' ? 'selected' : '' }}>Chủ đề ghim</option>
+							<option value="new_members" {{ $tab.type == 'new_members' ? 'selected' : '' }}>Vừa gia nhập (Thành viên mới)</option>
+							<option value="forum_nodes" {{ $tab.type == 'forum_nodes' ? 'selected' : '' }}>Lọc theo Diễn đàn chỉ định</option>
+						</select>
+					</td>
+					<td>
+						<select name="{$inputName}[{$i}][node_ids][]" class="input" multiple="multiple" size="7" style="min-width: 240px; max-width: 350px;">
+							<xf:foreach loop="$nodeOptions" value="$nodeOpt">
+								<option value="{$nodeOpt.value}" 
+										{{ in_array($nodeOpt.value, $tab.node_ids ?: []) ? 'selected="selected"' : '' }}>
+									{$nodeOpt.label}
+								</option>
+							</xf:foreach>
+						</select>
+					</td>
+					<td style="text-align: center;">
+						<input type="checkbox" name="{$inputName}[{$i}][active]" value="1" {{ $tab.active ? 'checked="checked"' : '' }} />
+					</td>
+					<td style="text-align: center;">
+						<button type="button" class="button button--small js-thaidt-remove-row" style="color: #e53e3e; font-weight: bold;" title="Xóa Tab này">✕</button>
+					</td>
+				</tr>
+			</xf:foreach>
+		</tbody>
+	</table>
+
+	<button type="button" class="button icon icon--add js-thaidt-add-tab-btn">+ Thêm Tab Mới</button>
+</xf:formrow>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	var tbody = document.querySelector('.js-thaidt-tab-tbody');
+	var addBtn = document.querySelector('.js-thaidt-add-tab-btn');
+	if (!tbody || !addBtn) return;
+
+	// Event delegation: Xóa dòng ngay lập tức khỏi DOM khi bấm nút Xóa ✕
+	tbody.addEventListener('click', function(e) {
+		var removeBtn = e.target.closest('.js-thaidt-remove-row');
+		if (!removeBtn) return;
+
+		e.preventDefault();
+		var row = removeBtn.closest('tr');
+		if (row && confirm('Bạn có chắc chắn muốn xóa Tab này?')) {
+			row.remove();
+		}
+	});
+
+	// Thêm Tab Mới
+	addBtn.addEventListener('click', function(e) {
+		e.preventDefault();
+		var rowCount = tbody.querySelectorAll('tr').length;
+		var newIndex = 'tab_' + Date.now();
+		var inputName = '{$inputName}' || 'options[thaidt_statistics_tabs]';
+
+		var tr = document.createElement('tr');
+		tr.className = 'thaidt-tab-manager-row js-thaidt-tab-row';
+		tr.innerHTML = `
+			<td>
+				<input type="number" name="${inputName}[${newIndex}][display_order]" value="${(rowCount + 1) * 10}" class="input input--number" style="width: 60px;" min="0" step="5" />
+			</td>
+			<td>
+				<input type="text" name="${inputName}[${newIndex}][title]" value="" class="input js-tab-title-input" placeholder="Tên Tab mới..." />
+				<input type="hidden" name="${inputName}[${newIndex}][id]" value="${newIndex}" />
+			</td>
+			<td>
+				<select name="${inputName}[${newIndex}][type]" class="input js-thaidt-type-select">
+					<option value="recent_replies">Vừa trả lời (Bài có reply mới nhất)</option>
+					<option value="latest_threads">Bài mới tạo (Chủ đề mới gửi)</option>
+					<option value="most_viewed">Xem nhiều nhất</option>
+					<option value="sticky">Chủ đề ghim</option>
+					<option value="new_members">Vừa gia nhập (Thành viên mới)</option>
+					<option value="forum_nodes" selected="selected">Lọc theo Diễn đàn chỉ định</option>
+				</select>
+			</td>
+			<td>
+				<select name="${inputName}[${newIndex}][node_ids][]" class="input" multiple="multiple" size="7" style="min-width: 240px; max-width: 350px;">
+					<xf:foreach loop="$nodeOptions" value="$nodeOpt">
+						<option value="{$nodeOpt.value}">
+							{$nodeOpt.label}
+						</option>
+					</xf:foreach>
+				</select>
+			</td>
+			<td style="text-align: center;">
+				<input type="checkbox" name="${inputName}[${newIndex}][active]" value="1" checked="checked" />
+			</td>
+			<td style="text-align: center;">
+				<button type="button" class="button button--small js-thaidt-remove-row" style="color: #e53e3e; font-weight: bold;" title="Xóa Tab này">✕</button>
+			</td>
+		`;
+
+		tbody.appendChild(tr);
+	});
+});
+</script>]]></template>
+  <template type="admin" title="thaidt_statistics_tab_list" version_id="1000070" version_string="1.0.0"><![CDATA[<xf:title>{{ phrase('admin_navigation.thaidt_statistics_tabs') }}</xf:title>
+
+<xf:pageaction>
+	<xf:button href="{{ link('thaidt-statistics/add') }}" icon="add">{{ phrase('thaidt_statistics_add_tab') }}</xf:button>
+</xf:pageaction>
+
+<xf:form action="{{ link('thaidt-statistics/sort') }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:datalist data-xf-init="drag-drop" data-drag-handle=".dataList-handle">
+				<xf:datarow rowtype="header"><xf:cell class="dataList-cell--dragHandle"></xf:cell><xf:cell>{{ phrase('title') }}</xf:cell><xf:cell>{{ phrase('thaidt_statistics_tab_type') }}</xf:cell><xf:cell class="dataList-cell--min">{{ phrase('active') }}</xf:cell><xf:cell class="dataList-cell--min">{{ phrase('display_order') }}</xf:cell><xf:cell class="dataList-cell--min"></xf:cell></xf:datarow>
+
+				<xf:foreach loop="$tabs" value="$tab">
+					<xf:datarow rowtype="sortable" id="tab-{$tab.tab_id}"><xf:cell class="dataList-handle" tag="span"><i class="fa--xf far fa-bars"></i></xf:cell><xf:cell href="{{ link('thaidt-statistics/edit', $tab) }}">{$tab.title}</xf:cell><xf:cell>{$tab.type_title}</xf:cell><xf:toggle name="active[{$tab.tab_id}]" value="{$tab.active}" ajax="true" action="{{ link('thaidt-statistics/toggle') }}" /><xf:cell class="dataList-cell--min">{$tab.display_order}</xf:cell><xf:delete href="{{ link('thaidt-statistics/delete', $tab) }}" /></xf:datarow>
+				</xf:foreach>
+			</xf:datalist>
+		</div>
+		<div class="block-footer">
+			<xf:submitrow icon="save" />
+		</div>
+	</div>
+</xf:form>]]></template>
+  <template type="admin" title="thaidt_statistics_tab_edit" version_id="1000070" version_string="1.0.0"><![CDATA[<xf:title>{{ $tab.isInsert() ? phrase('thaidt_statistics_add_tab') : phrase('thaidt_statistics_edit_tab') }}</xf:title>
+
+<xf:pageaction>
+	<xf:if is="$tab.isUpdate()">
+		<xf:button href="{{ link('thaidt-statistics/delete', $tab) }}" icon="delete" overlay="true" />
+	</xf:if>
+</xf:pageaction>
+
+<xf:form action="{{ link('thaidt-statistics/save', $tab) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:textboxrow name="title" value="{$tab.title}" required="true"
+				label="{{ phrase('title') }}"
+				explain="{{ phrase('thaidt_statistics_tab_title_explain') }}" />
+
+			<xf:radiorow name="tab_type" value="{$tab.tab_type}"
+				label="{{ phrase('thaidt_statistics_tab_type') }}"
+				data-xf-init="disabler">
+				<xf:option value="recent_replies" label="{{ phrase('thaidt_statistics_type_recent_replies') }}" />
+				<xf:option value="latest_threads" label="{{ phrase('thaidt_statistics_type_latest_threads') }}" />
+				<xf:option value="most_viewed" label="{{ phrase('thaidt_statistics_type_most_viewed') }}" />
+				<xf:option value="sticky" label="{{ phrase('thaidt_statistics_type_sticky') }}" />
+				<xf:option value="new_members" label="{{ phrase('thaidt_statistics_type_new_members') }}" />
+				<xf:option value="forum_nodes" label="{{ phrase('thaidt_statistics_type_forum_nodes') }}"
+					data-hide="true" data-container="#NodeSelectContainer" />
+			</xf:radiorow>
+
+			<div id="NodeSelectContainer">
+				<xf:selectrow name="node_ids[]" value="{$tab.node_ids}" multiple="multiple" size="8"
+					label="{{ phrase('option.thaidt_statistics_exclude_nodes') }}"
+					explain="{{ phrase('thaidt_statistics_select_nodes_explain') }}">
+					<xf:option value="0">{{ phrase('all_nodes') }}</xf:option>
+					<xf:foreach loop="$nodeTree.getFlattened(0)" value="$treeEntry">
+						<xf:option value="{$treeEntry.record.node_id}" disabled="{{ $treeEntry.record.node_type_id != 'Forum' }}">
+							{{ repeat('--', $treeEntry.depth) }} {$treeEntry.record.title}
+						</xf:option>
+					</xf:foreach>
+				</xf:selectrow>
+			</div>
+
+			<xf:numberboxrow name="display_order" value="{$tab.display_order}" min="0" step="10"
+				label="{{ phrase('display_order') }}" />
+
+			<xf:checkboxrow>
+				<xf:option name="active" value="1" selected="{$tab.active}">{{ phrase('active') }}</xf:option>
+			</xf:checkboxrow>
+		</div>
+
+		<xf:submitrow icon="save" />
+	</div>
+</xf:form>]]></template>
+  <template type="admin" title="thaidt_statistics_tab_delete" version_id="1000070" version_string="1.0.0"><![CDATA[<xf:title>{{ phrase('confirm_action') }}</xf:title>
+
+<xf:form action="{{ link('thaidt-statistics/delete', $tab) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow>
+				{{ phrase('thaidt_statistics_confirm_delete_tab', {'title': $tab.title}) }}
+			</xf:inforow>
+		</div>
+		<xf:submitrow rowtype="simple" submit="{{ phrase('delete') }}" icon="delete" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="thaidt_statistics.less" version_id="1000070" version_string="1.0.0"><![CDATA[.thaidt-stats-block {
+	background: #ffffff;
+	border-radius: 8px;
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+	border: 1px solid @xf-borderColorLight;
+	overflow: hidden;
+	margin-bottom: @xf-elementSpacer;
+
+	.block-container {
+		background: #ffffff;
+		border: none;
+		box-shadow: none;
+	}
+
+	.block-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.thaidt-header-actions {
+		display: flex;
+		align-items: center;
+		margin-left: auto;
+	}
+
+	.thaidt-refresh-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		color: #5c6b7d;
+		transition: all 0.25s ease;
+		background: #f0f2f5;
+		cursor: pointer;
+		border: 1px solid #e4e6eb;
+
+		&:hover {
+			color: #1877f2;
+			background: #e7f3ff;
+			border-color: #cce4ff;
+			text-decoration: none;
+			transform: scale(1.05);
+		}
+
+		.thaidt-refresh-icon {
+			width: 14px;
+			height: 14px;
+			transition: transform 0.25s ease;
+		}
+
+		&.is-refreshing .thaidt-refresh-icon {
+			animation: thaidt-spin 0.8s linear infinite;
+		}
+	}
+
+	.tabs-container {
+		background: #ffffff;
+		border-bottom: 1px solid #e0e0e0;
+		padding: 0 10px;
+	}
+
+	.tabs-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.tabs {
+		margin-bottom: 0;
+		border-bottom: none;
+		display: flex;
+		align-items: center;
+
+		.tabs-tab {
+			font-weight: 600;
+			font-size: 15px;
+			padding: 16px 20px;
+			color: #444444;
+			transition: all 0.2s ease;
+			border-bottom: 3px solid transparent;
+			margin-bottom: -1px;
+
+			&:hover {
+				color: #1877f2;
+				text-decoration: none;
+			}
+
+			&.is-active {
+				color: #1877f2;
+				border-bottom-color: #1877f2;
+				background: transparent;
+			}
+		}
+	}
+
+	.thaidt-tab-panel {
+		display: none;
+		padding: 6px 0;
+
+		&.is-active {
+			display: block;
+		}
+	}
+
+	.thaidt-list-container {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.thaidt-list-row {
+		display: flex;
+		align-items: center;
+		padding: 11px 20px;
+		transition: background-color 0.15s ease;
+		border-bottom: 1px solid #f2f2f2;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		&:hover {
+			background-color: #f8f9fa;
+		}
+
+		.rank-badge {
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 12px;
+			font-weight: 700;
+			color: #ffffff;
+			margin-right: 14px;
+			flex-shrink: 0;
+			background-color: #1976d2;
+
+			&.rank-1 {
+				background-color: #b71c1c;
+			}
+			&.rank-2 {
+				background-color: #b78103;
+			}
+			&.rank-3 {
+				background-color: #2e7d32;
+			}
+		}
+
+		.title-col {
+			flex: 1;
+			min-width: 0;
+			display: flex;
+			align-items: center;
+			font-size: 14px;
+			font-weight: 500;
+			color: #222222;
+
+			.label--prefix,
+			.label {
+				margin-right: 8px;
+				flex-shrink: 0;
+			}
+
+			.thread-link {
+				color: #222222;
+				text-decoration: none;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				transition: color 0.15s ease;
+
+				&:hover {
+					color: #1877f2;
+				}
+			}
+		}
+
+		.time-col {
+			width: 140px;
+			text-align: right;
+			font-size: 13px;
+			color: #888888;
+			margin-left: 15px;
+			flex-shrink: 0;
+		}
+
+		.user-col {
+			width: 140px;
+			text-align: right;
+			font-size: 13.5px;
+			font-weight: 600;
+			margin-left: 15px;
+			flex-shrink: 0;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+
+			a {
+				text-decoration: none;
+
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
+	}
+}
+
+@keyframes thaidt-spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+@media (max-width: 650px) {
+	.thaidt-stats-block {
+		.tabs-container .tabs .tabs-tab {
+			padding: 12px 10px;
+			font-size: 13.5px;
+		}
+
+		.thaidt-list-row {
+			padding: 10px 12px;
+
+			.time-col {
+				display: none;
+			}
+
+			.user-col {
+				width: auto;
+				max-width: 100px;
+			}
+		}
+	}
+}]]></template>
+  <template type="public" title="widget_thaidt_recent_replies" version_id="1000070" version_string="1.0.0"><![CDATA[<xf:css src="thaidt_statistics.less" />
+
+<xf:if is="$tabsData is not empty">
+	<div class="block thaidt-stats-block" 
+		 data-widget-definition="thaidt_recent_replies"
+		 data-refresh-url="{{ link('thaidt-statistics/refresh') }}"
+		 data-refresh-interval="{$xf.options.thaidt_statistics_auto_refresh}">
+		<div class="block-container">
+			<xf:if is="$showHeader AND $title">
+				<h3 class="block-header">
+					<span>{$title}</span>
+					<span class="thaidt-header-actions">
+						<a href="javascript:void(0);" class="thaidt-refresh-btn js-thaidt-refresh-btn" title="{{ phrase('thaidt_statistics_refresh') }}">
+							<svg class="thaidt-refresh-icon" viewBox="0 0 512 512" width="14" height="14" fill="currentColor">
+								<path d="M447.5 224H456c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L397.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L311 179.8c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8h119.5z"/>
+							</svg>
+						</a>
+					</span>
+				</h3>
+			</xf:if>
+
+			<xf:if is="count($tabsData) > 1">
+				<div class="tabs-container">
+					<div class="tabs-wrapper">
+						<div class="tabs hScroller" data-xf-init="h-scroller" style="flex: 1; min-width: 0;">
+							<span class="hScroller-scroll">
+								<xf:foreach loop="$tabsData" value="$tab" i="$i">
+									<a href="javascript:void(0);" 
+									   class="tabs-tab js-thaidt-tab {{ $i == 1 ? 'is-active' : '' }}" 
+									   data-target="thaidt-tab-panel-{$tab.id}">{$tab.title}</a>
+								</xf:foreach>
+							</span>
+						</div>
+						<xf:if is="!$showHeader OR !$title">
+							<div class="thaidt-header-actions" style="padding-right: 8px;">
+								<a href="javascript:void(0);" class="thaidt-refresh-btn js-thaidt-refresh-btn" title="{{ phrase('thaidt_statistics_refresh') }}">
+									<svg class="thaidt-refresh-icon" viewBox="0 0 512 512" width="14" height="14" fill="currentColor">
+										<path d="M447.5 224H456c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L397.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L311 179.8c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8h119.5z"/>
+									</svg>
+								</a>
+							</div>
+						</xf:if>
+					</div>
+				</div>
+			</xf:if>
+
+			<div class="block-body">
+				<xf:foreach loop="$tabsData" value="$tab" i="$i">
+					<div class="thaidt-tab-panel js-thaidt-panel {{ $i == 1 ? 'is-active' : '' }}" 
+						 id="thaidt-tab-panel-{$tab.id}" 
+						 style="{{ $i == 1 ? 'display: block;' : 'display: none;' }}">
+						
+						<xf:if is="$tab.type == 'users'">
+							<xf:if is="$tab.users is not empty">
+								<ul class="thaidt-list-container">
+									<xf:foreach loop="$tab.users" value="$user" i="$rank">
+										<li class="thaidt-list-row">
+											<span class="rank-badge rank-{$rank}">{$rank}</span>
+											<div class="title-col">
+												<div class="contentRow contentRow--alignMiddle">
+													<div class="contentRow-figure" style="padding-right: 8px;">
+														<xf:avatar user="{$user}" size="xs" />
+													</div>
+													<div class="contentRow-main">
+														<xf:username user="{$user}" rich="true" />
+														<xf:if is="{$user.custom_title}">
+															<span class="u-quiet u-depthMini" style="margin-left: 6px;">({$user.custom_title})</span>
+														</xf:if>
+													</div>
+												</div>
+											</div>
+											<div class="time-col">
+												<xf:date time="{$user.register_date}" />
+											</div>
+											<div class="user-col">
+												<span class="badge badge--highlighted">{$user.message_count|number} {{ phrase('messages') }}</span>
+											</div>
+										</li>
+									</xf:foreach>
+								</ul>
+							<xf:else />
+								<div class="block-row">{{ phrase('thaidt_statistics_no_threads') }}</div>
+							</xf:if>
+						<xf:else />
+							<xf:if is="$tab.threads is not empty">
+								<ul class="thaidt-list-container">
+									<xf:foreach loop="$tab.threads" value="$thread" i="$rank">
+										<li class="thaidt-list-row">
+											<span class="rank-badge rank-{$rank}">{$rank}</span>
+											<div class="title-col">
+												<xf:if is="$thread.prefix_id">
+													{{ prefix('thread', $thread, 'html', '') }}
+												</xf:if>
+												<xf:if is="$tab.tab_type == 'latest_threads'">
+													<a href="{{ link('threads', $thread) }}" class="thread-link" data-tp-primary="on">{$thread.title}</a>
+												<xf:else />
+													<a href="{{ link('threads/latest', $thread) }}" class="thread-link" data-tp-primary="on">{$thread.title}</a>
+												</xf:if>
+											</div>
+											<div class="time-col">
+												<xf:date time="{{ $tab.tab_type == 'latest_threads' ? $thread.post_date : $thread.last_post_date }}" />
+											</div>
+											<div class="user-col">
+												<xf:username user="{{ $tab.tab_type == 'latest_threads' ? $thread.User : $thread.LastPoster }}" 
+															rich="true" 
+															defaultname="{{ $tab.tab_type == 'latest_threads' ? $thread.username : $thread.last_post_username }}" />
+											</div>
+										</li>
+									</xf:foreach>
+								</ul>
+							<xf:else />
+								<div class="block-row">{{ phrase('thaidt_statistics_no_threads') }}</div>
+							</xf:if>
+						</xf:if>
+					</div>
+				</xf:foreach>
+			</div>
+		</div>
+	</div>
+</xf:if>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	document.querySelectorAll('.thaidt-stats-block').forEach(function(block) {
+		function initBlockTabs(el) {
+			var tabs = el.querySelectorAll('.js-thaidt-tab');
+			var panels = el.querySelectorAll('.js-thaidt-panel');
+
+			tabs.forEach(function(tab) {
+				tab.addEventListener('click', function(e) {
+					e.preventDefault();
+					var targetId = this.getAttribute('data-target');
+
+					tabs.forEach(function(t) { t.classList.remove('is-active'); });
+					panels.forEach(function(p) { p.classList.remove('is-active'); p.style.display = 'none'; });
+
+					this.classList.add('is-active');
+					var targetPanel = el.querySelector('#' + targetId);
+					if (targetPanel) {
+						targetPanel.classList.add('is-active');
+						targetPanel.style.display = 'block';
+					}
+				});
+			});
+		}
+
+		initBlockTabs(block);
+
+		var refreshUrl = block.getAttribute('data-refresh-url');
+		var refreshInterval = parseInt(block.getAttribute('data-refresh-interval'), 10) || 0;
+		var isRefreshing = false;
+
+		function doRefresh() {
+			if (!refreshUrl || isRefreshing) return;
+			isRefreshing = true;
+
+			var refreshBtns = block.querySelectorAll('.js-thaidt-refresh-btn');
+			refreshBtns.forEach(function(btn) { btn.classList.add('is-refreshing'); });
+
+			var activeTab = block.querySelector('.js-thaidt-tab.is-active');
+			var activeTargetId = activeTab ? activeTab.getAttribute('data-target') : null;
+
+			fetch(refreshUrl, {
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest',
+					'Accept': 'application/json, text/html'
+				}
+			})
+			.then(function(res) {
+				return res.json().catch(function() { return res.text(); });
+			})
+			.then(function(data) {
+				var html = typeof data === 'object' && data.html ? data.html : (typeof data === 'string' ? data : '');
+				if (html) {
+					var tempDiv = document.createElement('div');
+					tempDiv.innerHTML = html;
+					var newBlock = tempDiv.querySelector('.thaidt-stats-block') || tempDiv;
+					var newBody = newBlock.querySelector('.block-body');
+
+					if (newBody) {
+						var oldBody = block.querySelector('.block-body');
+						if (oldBody) {
+							oldBody.innerHTML = newBody.innerHTML;
+						}
+					}
+
+					// Giữ nguyên Tab đang mở
+					if (activeTargetId) {
+						var panels = block.querySelectorAll('.js-thaidt-panel');
+						panels.forEach(function(p) {
+							if (p.id === activeTargetId) {
+								p.classList.add('is-active');
+								p.style.display = 'block';
+							} else {
+								p.classList.remove('is-active');
+								p.style.display = 'none';
+							}
+						});
+					}
+				}
+			})
+			.catch(function(err) {
+				console.error('Statistics refresh error:', err);
+			})
+			.finally(function() {
+				isRefreshing = false;
+				refreshBtns.forEach(function(btn) { btn.classList.remove('is-refreshing'); });
+			});
+		}
+
+		// Nút Refresh thủ công
+		block.querySelectorAll('.js-thaidt-refresh-btn').forEach(function(btn) {
+			btn.addEventListener('click', function(e) {
+				e.preventDefault();
+				doRefresh();
+			});
+		});
+
+		// Auto refresh định kỳ
+		if (refreshInterval > 0) {
+			setInterval(function() {
+				if (!document.hidden) {
+					doRefresh();
+				}
+			}, refreshInterval * 1000);
+		}
+	});
+});
+</script>]]></template>
+  <template type="admin" title="widget_options_thaidt_recent_replies" version_id="1000070" version_string="1.0.0"><![CDATA[<xf:numberboxrow name="options[limit]" value="{$options.limit}" min="0"
+	label="{{ phrase('option.thaidt_statistics_limit') }}"
+	explain="{{ phrase('thaidt_statistics_limit_explain_widget', {'default': $xf.options.thaidt_statistics_limit}) }}" />
+
+<xf:selectrow name="options[style]" value="{$options.style}"
+	label="{{ phrase('thaidt_statistics_style') }}">
+	<xf:option value="table">{{ phrase('thaidt_statistics_style_table') }}</xf:option>
+	<xf:option value="simple">{{ phrase('thaidt_statistics_style_simple') }}</xf:option>
+</xf:selectrow>
+
+<xf:selectrow name="options[node_ids][]" value="{{ $options.node_ids ?: '' }}" multiple="multiple" size="7"
+	label="{{ phrase('option.thaidt_statistics_exclude_nodes') }}"
+	explain="{{ phrase('option_explain.thaidt_statistics_exclude_nodes') }}">
+
+	<xf:option value="0">{{ phrase('all_nodes') }}</xf:option>
+	<xf:foreach loop="$nodeTree.getFlattened(0)" value="$treeEntry">
+		<xf:option value="{$treeEntry.record.node_id}" disabled="{{ $treeEntry.record.node_type_id != 'Forum' }}">
+			{{ repeat('--', $treeEntry.depth) }} {$treeEntry.record.title}
+		</xf:option>
+	</xf:foreach>
+</xf:selectrow>
+
+<xf:textarearow name="options[exclude_thread_ids]" value="{$options.exclude_thread_ids}" rows="3"
+	label="{{ phrase('option.thaidt_statistics_exclude_threads') }}"
+	explain="{{ phrase('option_explain.thaidt_statistics_exclude_threads') }}" />]]></template>
+</templates>

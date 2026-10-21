@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template_modifications>
+  <modification type="public" template="forum_list" modification_key="thaidt_statistics_forum_above" description="Chèn thống kê trên danh sách Node trang chủ (Forum List Above Nodes)" execution_order="10" enabled="1" action="preg_replace">
+    <find><![CDATA[/^/]]></find>
+    <replace><![CDATA[<xf:if is="$xf.options.thaidt_statistics_position == 'forum_list_above_nodes'">
+	<xf:widget class="Thaidt\Statistics:RecentReplies" />
+</xf:if>
+$0]]></replace>
+  </modification>
+  <modification type="public" template="forum_list" modification_key="thaidt_statistics_forum_below" description="Chèn thống kê dưới danh sách Node trang chủ (Forum List Below Nodes)" execution_order="10" enabled="1" action="preg_replace">
+    <find><![CDATA[/$/]]></find>
+    <replace><![CDATA[$0
+<xf:if is="$xf.options.thaidt_statistics_position == 'forum_list_below_nodes'">
+	<xf:widget class="Thaidt\Statistics:RecentReplies" />
+</xf:if>]]></replace>
+  </modification>
+  <modification type="public" template="PAGE_CONTAINER" modification_key="thaidt_statistics_above_breadcrumb" description="Chèn thống kê trên Top Breadcrumb" execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<xf:ad position="container_breadcrumb_top_above" />]]></find>
+    <replace><![CDATA[$0
+<xf:if is="$xf.options.thaidt_statistics_position == 'above_top_breadcrumb'">
+	<xf:widget class="Thaidt\Statistics:RecentReplies" />
+</xf:if>]]></replace>
+  </modification>
+  <modification type="public" template="PAGE_CONTAINER" modification_key="thaidt_statistics_below_breadcrumb" description="Chèn thống kê dưới Top Breadcrumb" execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<xf:ad position="container_breadcrumb_top_below" />]]></find>
+    <replace><![CDATA[$0
+<xf:if is="$xf.options.thaidt_statistics_position == 'below_top_breadcrumb'">
+	<xf:widget class="Thaidt\Statistics:RecentReplies" />
+</xf:if>]]></replace>
+  </modification>
+  <modification type="public" template="PAGE_CONTAINER" modification_key="thaidt_statistics_above_content" description="Chèn thống kê trên p-content (Above Content)" execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<xf:ad position="container_content_above" />]]></find>
+    <replace><![CDATA[$0
+<xf:if is="$xf.options.thaidt_statistics_position == 'above_content'">
+	<xf:widget class="Thaidt\Statistics:RecentReplies" />
+</xf:if>]]></replace>
+  </modification>
+  <modification type="public" template="PAGE_CONTAINER" modification_key="thaidt_statistics_below_content" description="Chèn thống kê dưới p-content (Below Content)" execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<xf:ad position="container_content_below" />]]></find>
+    <replace><![CDATA[$0
+<xf:if is="$xf.options.thaidt_statistics_position == 'below_content'">
+	<xf:widget class="Thaidt\Statistics:RecentReplies" />
+</xf:if>]]></replace>
+  </modification>
+  <modification type="public" template="PAGE_CONTAINER" modification_key="thaidt_statistics_header" description="Chèn thống kê khu vực Header (p-body-inner)" execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<div class="p-body-inner">]]></find>
+    <replace><![CDATA[$0
+<xf:if is="$xf.options.thaidt_statistics_position == 'header'">
+	<xf:widget class="Thaidt\Statistics:RecentReplies" />
+</xf:if>]]></replace>
+  </modification>
+</template_modifications>

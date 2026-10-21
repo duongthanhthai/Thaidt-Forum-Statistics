@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phrases>
+  <phrase title="admin_navigation.thaidt_statistics_tabs" version_id="1000070" version_string="1.0.0"><![CDATA[[Thaidt] Quản lý Tabs Thống kê]]></phrase>
+  <phrase title="option_group.thaidt_statistics" version_id="1000070" version_string="1.0.0"><![CDATA[[Thaidt] Thống kê bài viết & Vị trí]]></phrase>
+  <phrase title="option_group_description.thaidt_statistics" version_id="1000070" version_string="1.0.0"><![CDATA[Cấu hình vị trí hiển thị, bật/tắt tiêu đề, quản lý các Tab động và loại trừ bài viết/diễn đàn.]]></phrase>
+  <phrase title="option.thaidt_statistics_position" version_id="1000070" version_string="1.0.0"><![CDATA[Vị trí hiển thị bảng thống kê]]></phrase>
+  <phrase title="option_explain.thaidt_statistics_position" version_id="1000070" version_string="1.0.0"><![CDATA[Chọn vị trí tự động chèn bảng thống kê trên diễn đàn. Bạn cũng có thể chọn 'Tắt tự động' để tự thêm Widget thủ công trong Quản lý Widget.]]></phrase>
+  <phrase title="option.thaidt_statistics_show_header" version_id="1000070" version_string="1.0.0"><![CDATA[Hiển thị tiêu đề khối (Block Header)]]></phrase>
+  <phrase title="option_explain.thaidt_statistics_show_header" version_id="1000070" version_string="1.0.0"><![CDATA[Bật hoặc tắt thanh tiêu đề ở phía trên cùng của bảng thống kê.]]></phrase>
+  <phrase title="option.thaidt_statistics_header_title" version_id="1000070" version_string="1.0.0"><![CDATA[Tên tiêu đề khối tùy chỉnh]]></phrase>
+  <phrase title="option_explain.thaidt_statistics_header_title" version_id="1000070" version_string="1.0.0"><![CDATA[Nhập tên hiển thị ở thanh tiêu đề (ví dụ: 'Thống kê diễn đàn' hoặc 'Bài viết mới').]]></phrase>
+  <phrase title="option.thaidt_statistics_tabs" version_id="1000070" version_string="1.0.0"><![CDATA[Quản lý & Cấu hình các Tab Thống kê]]></phrase>
+  <phrase title="option_explain.thaidt_statistics_tabs" version_id="1000070" version_string="1.0.0"><![CDATA[Thêm, sửa, xóa, đổi tên, chọn loại dữ liệu/diễn đàn nguồn và sắp xếp thứ tự các Tab hiển thị ra ngoài frontend.]]></phrase>
+
+  <phrase title="thaidt_statistics_tab_recent_replies" version_id="1000070" version_string="1.0.0"><![CDATA[Vừa trả lời]]></phrase>
+  <phrase title="thaidt_statistics_tab_most_viewed" version_id="1000070" version_string="1.0.0"><![CDATA[Xem nhiều nhất]]></phrase>
+  <phrase title="thaidt_statistics_tab_sticky" version_id="1000070" version_string="1.0.0"><![CDATA[Chủ đề ghim]]></phrase>
+  <phrase title="thaidt_statistics_tab_latest_threads" version_id="1000070" version_string="1.0.0"><![CDATA[Thành viên mới đăng]]></phrase>
+  <phrase title="thaidt_statistics_tab_new_members" version_id="1000070" version_string="1.0.0"><![CDATA[Vừa gia nhập]]></phrase>
+
+  <phrase title="thaidt_statistics_pos_disabled" version_id="1000070" version_string="1.0.0"><![CDATA[Tắt tự động (Chỉ sử dụng qua Quản lý Widget thủ công)]]></phrase>
+  <phrase title="thaidt_statistics_pos_forum_list_above_nodes" version_id="1000070" version_string="1.0.0"><![CDATA[Trang chủ Diễn đàn - Trên danh sách Node (Forum List: Above Nodes)]]></phrase>
+  <phrase title="thaidt_statistics_pos_forum_list_below_nodes" version_id="1000070" version_string="1.0.0"><![CDATA[Trang chủ Diễn đàn - Dưới danh sách Node (Forum List: Below Nodes)]]></phrase>
+  <phrase title="thaidt_statistics_pos_above_content" version_id="1000070" version_string="1.0.0"><![CDATA[Trên tất cả nội dung (Above Content / p-body-content)]]></phrase>
+  <phrase title="thaidt_statistics_pos_below_content" version_id="1000070" version_string="1.0.0"><![CDATA[Dưới tất cả nội dung (Below Content)]]></phrase>
+  <phrase title="thaidt_statistics_pos_above_top_breadcrumb" version_id="1000070" version_string="1.0.0"><![CDATA[Trên thanh Breadcrumb đầu trang (Above Top Breadcrumb)]]></phrase>
+  <phrase title="thaidt_statistics_pos_below_top_breadcrumb" version_id="1000070" version_string="1.0.0"><![CDATA[Dưới thanh Breadcrumb đầu trang (Below Top Breadcrumb)]]></phrase>
+  <phrase title="thaidt_statistics_pos_header" version_id="1000070" version_string="1.0.0"><![CDATA[Khu vực Header (p-body-header / Above main)]]></phrase>
+  <phrase title="option.thaidt_statistics_limit" version_id="1000070" version_string="1.0.0"><![CDATA[Số lượng mục hiển thị mỗi Tab]]></phrase>
+  <phrase title="option_explain.thaidt_statistics_limit" version_id="1000070" version_string="1.0.0"><![CDATA[Số lượng bài viết/thành viên tối đa xuất hiện trong từng Tab.]]></phrase>
+  <phrase title="option.thaidt_statistics_auto_refresh" version_id="1000070" version_string="1.0.0"><![CDATA[Thời gian tự động làm mới ngoài Frontend (giây)]]></phrase>
+  <phrase title="option_explain.thaidt_statistics_auto_refresh" version_id="1000070" version_string="1.0.0"><![CDATA[Tự động làm mới dữ liệu bài viết mới nhất trên bảng thống kê qua AJAX ngầm sau số giây này (không cần tải lại trang web). Nhập 0 để tắt tự động làm mới.]]></phrase>
+  <phrase title="option.thaidt_statistics_exclude_nodes" version_id="1000070" version_string="1.0.0"><![CDATA[Diễn đàn loại trừ (Loại trừ Forum)]]></phrase>
+  <phrase title="option_explain.thaidt_statistics_exclude_nodes" version_id="1000070" version_string="1.0.0"><![CDATA[Giữ phím Ctrl (hoặc Cmd trên Mac) để chọn nhiều diễn đàn. Bài viết thuộc các diễn đàn này sẽ không xuất hiện trong thống kê.]]></phrase>
+  <phrase title="option.thaidt_statistics_exclude_threads" version_id="1000070" version_string="1.0.0"><![CDATA[ID bài viết/chủ đề loại trừ (Loại trừ Thread ID)]]></phrase>
+  <phrase title="option_explain.thaidt_statistics_exclude_threads" version_id="1000070" version_string="1.0.0"><![CDATA[Nhập danh sách ID các bài viết/chủ đề cụ thể không muốn hiển thị (phân cách bằng dấu phẩy hoặc xuống dòng). Ví dụ: 12, 45, 99.]]></phrase>
+  <phrase title="widget_def.thaidt_recent_replies" version_id="1000070" version_string="1.0.0"><![CDATA[[Thaidt] Thống kê bài viết & Tabs]]></phrase>
+  <phrase title="thaidt_statistics_title" version_id="1000070" version_string="1.0.0"><![CDATA[Thống kê diễn đàn]]></phrase>
+  <phrase title="thaidt_statistics_refresh" version_id="1000070" version_string="1.0.0"><![CDATA[Làm mới dữ liệu]]></phrase>
+  <phrase title="thaidt_statistics_table_title" version_id="1000070" version_string="1.0.0"><![CDATA[Chủ đề]]></phrase>
+  <phrase title="thaidt_statistics_table_forum" version_id="1000070" version_string="1.0.0"><![CDATA[Diễn đàn]]></phrase>
+  <phrase title="thaidt_statistics_table_author" version_id="1000070" version_string="1.0.0"><![CDATA[Người đăng]]></phrase>
+  <phrase title="thaidt_statistics_table_last_reply" version_id="1000070" version_string="1.0.0"><![CDATA[Trả lời cuối]]></phrase>
+  <phrase title="thaidt_statistics_table_replies" version_id="1000070" version_string="1.0.0"><![CDATA[Trả lời]]></phrase>
+  <phrase title="thaidt_statistics_table_views" version_id="1000070" version_string="1.0.0"><![CDATA[Xem]]></phrase>
+  <phrase title="thaidt_statistics_no_threads" version_id="1000070" version_string="1.0.0"><![CDATA[Không có dữ liệu hiển thị.]]></phrase>
+  <phrase title="thaidt_statistics_style" version_id="1000070" version_string="1.0.0"><![CDATA[Kiểu hiển thị]]></phrase>
+  <phrase title="thaidt_statistics_style_table" version_id="1000070" version_string="1.0.0"><![CDATA[Bảng thống kê đầy đủ (Table Layout)]]></phrase>
+  <phrase title="thaidt_statistics_style_simple" version_id="1000070" version_string="1.0.0"><![CDATA[Danh sách thu gọn (Sidebar List Layout)]]></phrase>
+  <phrase title="thaidt_statistics_limit_explain_widget" version_id="1000070" version_string="1.0.0"><![CDATA[Nhập 0 để sử dụng cài đặt mặc định toàn hệ thống ({default} mục).]]></phrase>
+</phrases>
